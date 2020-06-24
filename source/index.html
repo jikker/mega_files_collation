@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<!-- 檔案整理器 作者:jikker -->
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>MEGA檔案整理器</title>
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/jquery.dataTables.min.css" rel="stylesheet">
+	<style>
+		body { font-size:16pt; }
+	</style>
+  </head>
+  <body>
+	<div class="container-fluid">
+		<div id="mybanner">
+			
+		</div>
+		<div class="row">
+			<div class="col-sm-4" id="left_box">
+				<form class="form-horizontal" role="form">	
+					<div class="form-group">
+						<label for="files" class="col-sm-12 control-label text-danger">請用拖曳方式拉取資料夾到下方欄位</label>
+						<div class="col-sm-12 input-p">
+						  <input type="file" class="form-control-file" id="files" placeholder="請用拖曳方式拉取資料夾到下方欄位">
+						</div>
+					</div>
+					<hr>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+						  <input type="checkbox" class="form-check-input" id="include_sub_folder">
+						  <label class="form-check-label text-success" for="include_sub_folder" data-toggle="tooltip" data-placement="right" title="包含子資料夾內的檔案一併處理">包含子資料夾</label>
+						</div>
+					</div>
+					<hr>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+							<input type="checkbox" class="form-check-input" id="rm_file_label">
+							<label class="form-check-label text-success" for="rm_file_label">刪除垃圾檔案</label>
+						</div>
+						<div class="col-sm-12 input-p">
+						  <input type="text" class="form-control text" id="rm_file_str" placeholder="檔名(含副檔名)用 ; 隔開" data-toggle="tooltip" title="關鍵字用 ; 隔開，檔名完全相同時刪除該檔案">
+						  </select>
+						</div>
+					</div>
+					<hr>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+							<input type="checkbox" class="form-check-input" id="rm_name_label">
+							<label class="form-check-label text-success" for="rm_name_label">資料夾名/檔名移除關鍵字</label>
+						</div>
+						<div class="col-sm-12 input-p">
+						  <input type="text" class="form-control text" id="rm_name_str" placeholder="移除關鍵字用 ; 隔開" data-toggle="tooltip" title="關鍵字用 ; 隔開，自動移除檔案名稱內的關鍵字">
+						  </select>
+						</div>
+					</div>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+							<input type="checkbox" class="form-check-input" id="replace_name_label">
+							<label class="form-check-label text-success" for="replace_name_label">資料夾名/檔名關鍵字取代</label>
+						</div>
+						<div class="col-sm-12 input-p">
+						  <input type="text" class="form-control text" id="replace_name_str" placeholder="每組用 | 隔開，分組方式：搜尋A;取代B|搜尋C;取代D|" data-toggle="tooltip" title="關鍵字用 ; 隔開，自動取代檔案名稱內的關鍵字">
+						  </select>
+						</div>
+					</div>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+						  <input type="checkbox" class="form-check-input" id="remove_more_space">
+						  <label class="form-check-label text-success" for="remove_more_space" data-toggle="tooltip" data-placement="right" title="檔名中空白多餘10個時，刪除所有空白">資料夾名/檔名刪除多餘空白(>10)</label>
+						</div>
+					</div>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+						  <input type="checkbox" class="form-check-input" id="underline_to_space">
+						  <label class="form-check-label text-success" for="underline_to_space" data-toggle="tooltip" data-placement="right" title="將檔名中所有的底線換成空白">資料夾名/檔名底線換成空白</label>
+						</div>
+					</div>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+						  <input type="checkbox" class="form-check-input" id="remove_other_number" disabled>
+						  <label class="form-check-label" for="remove_other_number" data-toggle="tooltip" data-placement="right" title="刪除檔名最前面 - 號的數字 EX: 5678-XXXX ">刪除資料夾名/檔名-前面數字</label>
+						</div>
+					</div>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+						  <input type="checkbox" class="form-check-input" id="empty_folder">
+						  <label class="form-check-label text-success" for="empty_folder" data-toggle="tooltip" data-placement="right" title="資料夾內沒有檔案時，將資料夾名稱前面加入 0_EMPTY_">空資料夾命名改 0_EMPTY_ 開頭 </label>
+						</div>
+					</div>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+						  <input type="checkbox" class="form-check-input" id="one_file_folder_name">
+						  <label class="form-check-label text-success" for="one_file_folder_name" data-toggle="tooltip" data-placement="right" title="資料夾內只有唯一一個檔案時，用資料夾名稱為此檔案命名">單一檔案使用資料夾名稱命名</label>
+						</div>
+					</div>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+						  <input type="checkbox" class="form-check-input" id="big_file_folder_name">
+						  <label class="form-check-label text-success" for="big_file_folder_name" data-toggle="tooltip" data-placement="right" title="將子資料夾中最大的檔案用資料夾名稱為此檔案命名">最大檔案使用資料夾名稱命名</label>
+						</div>
+					</div>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+						  <input type="checkbox" class="form-check-input" id="big_file_name">
+						  <label class="form-check-label" for="big_file_name" data-toggle="tooltip" data-placement="right" title="檔名英文都改為大寫">資料夾名/檔名英文都大寫</label>
+						</div>
+					</div>
+					
+					<hr>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+						  <input type="checkbox" class="form-check-input" id="move_by_serial" disabled>
+						  <label class="form-check-label" for="move_by_serial" data-toggle="tooltip" data-placement="right" title="將此檔案搬移至下層以檔名分類的資料夾">檔案搬移至分類資料夾</label>
+						</div>
+					</div>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+						  <input type="checkbox" class="form-check-input" id="move_top_by_serial" disabled>
+						  <label class="form-check-label" for="move_top_by_serial" data-toggle="tooltip" data-placement="right" title="資料夾內只有唯一一個檔案時，將此檔案搬移至上層以檔名分類的資料夾">單一檔案自動搬移至上層分類資料夾</label>
+						</div>
+					</div>
+				
+					<div class="form-check">
+						<div class="col-sm-12">
+						  <input type="checkbox" class="form-check-input" id="move_all_file_up" disabled>
+						  <label class="form-check-label" for="move_all_file_up" data-toggle="tooltip" data-placement="right" title="將資料夾內所有檔案往上搬移一層">資料夾內所有檔案往搬上一層</label>
+						</div>
+					</div>
+					
+					<div class="form-check">
+						<div class="col-sm-12">
+						  <button id="pre-process" type="button" class="btn btn-primary">預覽結果</button>
+						  <!--<button id="json" type="button" class="btn btn-primary">JSON格式檔</button>-->
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="col-sm-4" id="mid_box">
+				<div class="form-group">
+					<label for="old_files_list">預覽結果</label>
+					<select multiple class="form-control" id="old_files_list" size="35">
+						<option class='alert-danger'>已知問題</option>
+						<option>單一檔名有多種取代條件可能會沒改到</option>
+						<option>資料夾與下層檔名同時需要更改時，資料夾名稱會改不過去</option>
+						<option>改第一次失敗，你有再改第二次嗎?</option>
+						<option>再按一次預覽就可以再跑一次</option>
+						<option>要取代括號 如 ( ) [ ] 等，請在括號前面多打一個反斜線，如 \(1\);\[1080p\]</option>
+						<option></option>
+						<option class='alert-success'>點選預覽後雙擊本欄路徑，可以開啟檔案或資料夾</option>
+					</select>
+					<br>
+					<button id="process" type="button" class="btn btn-danger hide">進行處理</button>
+				</div>
+			</div>
+			<div class="col-sm-4" id="right_box">
+				<div class="form-group">
+					<label for="old_files_list">處理結果</label>
+					<select multiple class="form-control" id="new_files_list" size="35">
+						<option class='alert-success'>作者：S.H.I.E.L.D</option>
+						<option class='alert-success'>此為alpha 測試版，請勿外流，祝外流者天天6點半</option>
+						<option class='alert-success'>開放功能許願，雖然我不一定會做 XD</option>
+						<option></option>
+						<option class='alert-success link'>github: https://github.com/jikker/mega_files_collation</option>
+					</select>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+    <script src="js/jquery-3.5.1.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+	<script src="js/jquery.dataTables.min.js"></script>
+	<script src="js/setting.js"></script>
+	<script src="js/utility.js"></script>
+	<script>
+		init_setting();
+		setTimeout("init_index_page()", 300);
+		
+		let rename = [];
+		let del_str = [];
+		let rename_str = [];
+		let replace_name_str = [];
+		let move = [];
+		let sub_folder = [];
+		let files = [];
+		let action = {'del': '刪除', 'rename': '更名', 'move': '搬移', 'null': '不動'};
+		const fs = require('fs').promises;
+		
+		function init_index_page(){
+			$('.text').each(function(){
+				$(this).val( init[$(this).attr('id')]);
+			});
+			$('.form-check-input').each(function(){
+				$(this).prop('checked', init[$(this).attr('id')]);
+			});
+			$('.hide').hide();
+			$('[data-toggle="tooltip"]').tooltip();
+		}
+		
+		// 取得副檔名
+		function getFileExtension(filename) {
+			return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2);
+		}
+		
+		// 目錄變動
+		$('#files').on('change', function(){
+			let path = $(this).val();
+			let chk_this_path = async function(path){
+				rename = []; move = []; sub_folder = []; files = [];
+				let r = await chekc_file_sync(path);
+				if( r != 2 ){
+					alert('請用拖曳方式選擇資料夾!');
+					$('#files').val('');
+				}else{
+					let first_get_path = async function(){
+						await get_path_files(path);
+						if( $('#include_sub_folder').prop('checked') ){		// 包含子資料夾
+							await get_sub_path_files();
+						}
+					}
+					first_get_path();
+				}
+			};
+			chk_this_path(path);
+		});
+		
+		// 取得跟目錄檔案
+		async function get_path_files(path){
+			const fs = require('fs').promises;
+			const list = await fs.readdir(path);
+			let r='';
+			for (const f of list) {
+				//console.log(f);
+				r = await chekc_file_sync(path + '\\' +f);
+				if(r == 2){
+					sub_folder.push({'name': f, 'path': f, 'new_path': f, 'realpath': path + '\\' + f ,'parent': path, 'level': 1, 'action': 'null', 'new_name': 'null', 'result': '無需處理	', 'status': 1, 'type': 'folder', 'sync': 0});
+				}else if( r == 1){
+					files.push(		{'name': f, 'path': f, 'new_path': f, 'realpath': path + '\\' + f ,'parent': path, 'level': 1, 'action': 'null', 'new_name': 'null', 'result': '無需處理	', 'status': 1, 'type': 'file'});
+				}
+			}
+			console.log(sub_folder);
+			console.log(files);
+		}
+		
+		async function get_sub_path_files(){
+			const fs = require('fs').promises;
+			//const list = await fs.readdir(path);
+			let sub = [];
+			let sub_f = [];
+			let list = {};
+			let r = '';
+			let big_file_size = 0;
+			let big_file_name = '';
+			let tmp = 0;
+			for(let i=0;i<sub_folder.length;i++){
+				if( sub_folder[i]['sync'] == 0){ // 沒遞迴過
+					list = await fs.readdir(sub_folder[i]['realpath']);
+					sub_folder[i]['sync'] = 1;
+					if( $('#big_file_folder_name').prop('checked') ){	// 最大檔案使用資料夾名稱命名
+						big_file_size = 0;
+						for (const cf of list) {
+							tmp = await fs.stat(sub_folder[i]['realpath'] + '\\' + cf);
+							if(tmp.size > big_file_size){
+								big_file_size = tmp.size;
+								big_file_name = cf;
+							}
+						}
+					}
+					if( $('#empty_folder').prop('checked') ){			// 空資料夾命名改 0_EMPTY_ 開頭
+						if( list.length == 0){
+							sub_folder[i]['action'] = 'rename';
+							sub_folder[i]['new_name'] = '0_EMPTY_' + sub_folder[i]['name'];
+							sub_folder[i]['new_realpath'] = sub_folder[i]['parent'] + '\\' + sub_folder[i]['new_name'];
+							sub_folder[i]['new_path'] = sub_folder[i]['path'].replace(new RegExp(sub_folder[i]['name'],'g'), sub_folder[i]['new_name']);
+						}
+					}
+					for (const sf of list) {
+						r = await chekc_file_sync(sub_folder[i]['realpath'] + '\\' + sf);
+						if(r == 2){
+							sub.push(	{'name': sf, 'path': sub_folder[i]['name'] + '\\' + sf, 'new_path': sub_folder[i]['name'] + '\\' + sf, 'realpath': sub_folder[i]['realpath'] + '\\' + sf ,'parent': sub_folder[i]['realpath'], 'level': sub_folder[i]['level']+1, 'action': 'null', 'new_name': 'null', 'result': '無需處理	', 'status': 1, 'type': 'folder', 'sync': 0});
+						}else if( r == 1){
+							let push = 0;
+							if( list.length == 1 ){	// 單一檔案
+								if( $('#one_file_folder_name').prop('checked') ){			// 單一檔案使用資料夾名稱命名
+								let tmp_sf = sf.split('.' + getFileExtension(sf))[0];
+									if(tmp_sf != sub_folder[i]['name']){	// 檔名不等於資料夾名
+										let sub_filename = getFileExtension(sf);
+										let new_name = sub_folder[i]['name'] + '.' + sub_filename;
+										let new_path = sub_folder[i]['path'] + '\\' + new_name;
+										sub_f.push(	{'name': sf, 'path': sub_folder[i]['name'] + '\\' + sf, 'new_path': new_path, 'realpath': sub_folder[i]['realpath'] + '\\' + sf ,'new_realpath': sub_folder[i]['realpath'] + '\\' + new_name ,'parent': sub_folder[i]['realpath'], 'level': sub_folder[i]['level']+1, 'action': 'rename', 'new_name': new_name, 'result': '重新命名	', 'status': 1, 'type': 'file'});
+										push +=1;
+									}
+								}else if( $('#move_top_by_serial').prop('checked') ){		// 單一檔案自動搬移至上層分類資料夾
+				
+								}
+							}else if( $('#big_file_folder_name').prop('checked') ){	// 最大檔案使用資料夾名稱命名
+								if(sf == big_file_name){
+									let sub_filename = getFileExtension(sf);
+									let new_name = sub_folder[i]['name'] + '.' + sub_filename;
+									let new_path = sub_folder[i]['path'] + '\\' + new_name;
+									sub_f.push(	{'name': sf, 'path': sub_folder[i]['name'] + '\\' + sf, 'new_path': new_path, 'realpath': sub_folder[i]['realpath'] + '\\' + sf ,'new_realpath': sub_folder[i]['realpath'] + '\\' + new_name ,'parent': sub_folder[i]['realpath'], 'level': sub_folder[i]['level']+1, 'action': 'rename', 'new_name': new_name, 'result': '重新命名	', 'status': 1, 'type': 'file'});
+									push += 1;
+								}
+							}else{
+								
+							}
+							if( push == 0){	// 上面都沒改變
+								sub_f.push(	{'name': sf, 'path': sub_folder[i]['name'] + '\\' + sf, 'new_path': sub_folder[i]['name'] + '\\' + sf, 'realpath': sub_folder[i]['realpath'] + '\\' + sf ,'parent': sub_folder[i]['realpath'], 'level': sub_folder[i]['level']+1, 'action': 'null', 'new_name': 'null', 'result': '無需處理	', 'status': 1, 'type': 'file'});
+							}
+						}
+					}
+				}
+			}
+			console.log(sub);
+			console.log(sub_f);
+			for(let i=0;i<sub.length;i++){
+				sub_folder.push(sub[i]);
+			}
+			for(let i=0;i<sub_f.length;i++){
+				files.push(sub_f[i]);
+			}
+			if(sub.length > 0 ){	// 子資料夾中還有資料夾
+				r = await get_sub_path_files();
+			}
+		}
+		
+		// 欄位變動
+		$('input').on('change', function(){
+			let data = {};
+			$('input').each(function(){
+				let key = $(this).attr('id');
+				let val = $(this).val();
+				if( $(this).attr('type') == 'checkbox' ){
+					val = $(this).prop('checked');
+				}
+				data[key]=val;
+			});
+			//console.log(data);
+			init = data;
+			writeDataToJson(execPath + "/data/setting.js", 'init', data, function(result){
+				console.log( result );
+			});
+			del_str = $('#rm_file_str').val().split(';');
+			rename_str = $('#rm_name_str').val().split(';');
+			let tmp = $('#replace_name_str').val().split('|');
+			replace_name_str = [];
+			for(let i=0; i<tmp.length; i++){
+				replace_name_str.push(tmp[i].split(';'));
+			}
+		});
+		
+		// 預覽按鈕
+		$('#pre-process').click(function(){
+			let path = $('#files').val();
+			let sub_path = '';
+			if( path == ''){
+				alert('請用拖曳方式選擇資料夾');
+				return 0;
+			}
+			let chk_this_path = async function(p){
+				sub_folder = []; files = [];
+				await get_path_files(p);
+				if( $('#include_sub_folder').prop('checked') ){		// 包含子資料夾
+					await get_sub_path_files();
+				}
+			};
+			chk_this_path(path).then( () => {
+				pre_file_process(sub_folder, files);      // 預覽處理檔案
+				sub_folder = sub_folder.sort(function (a, b) {
+					return a.realpath > b.realpath ? 1 : -1;
+				});
+				files = files.sort(function (a, b) {
+					return a.realpath > b.realpath ? 1 : -1;
+				});
+				list_file_pre_process(sub_folder, files); // 列出預覽結果
+				$('#process').show();
+				//console.log(files);
+			});
+		});
+		
+		// 處理按鈕
+		$('#process').click(function(){
+			$('#process').hide();
+			let do_file_process = async function(f){
+				let r = '';
+				for(let i=0;i<f.length;i++){
+					r = f[i];
+					if(f[i]['action'] == 'del'){
+						r = await remove_files(f[i]);
+					}else if(f[i]['action'] == 'rename'){
+						r = await rename_files(f[i]);
+					}
+					f[i]['result'] = r['result'];
+					f[i]['status'] = r['status'];
+					add_file_process_result(f[i]);
+				}
+			};
+			do_file_process(files).then( do_file_process(sub_folder) );
+		});
+		
+		//列出預覽結果
+		function list_file_pre_process(s, f){
+			let color='';
+			$('#old_files_list').html('');
+			$('#new_files_list').html('');
+			let echo_list_pre_process = function(a){
+				let type ,type_class;
+				for(let i=0;i<a.length;i++){
+					type = a[i]['type'];
+					color = return_option_color(type, a[i]['action']);
+					if(type == "folder") type_class = 'font-weight-bold';
+					else type_class = '';
+					if( a[i]['action'] == 'rename'){	// 改名結果
+						$('#old_files_list').append('<option class="'+ type_class +' '+ color +' opentag ' + type +'" value="'+ a[i]['realpath'] +'">'+ action[ a[i]['action'] ]+': '+ a[i]['path'] +' to '+ a[i]['new_name'] +'</option>');
+					}else{
+						$('#old_files_list').append('<option class="'+ type_class +' '+ color +' opentag ' + type +'" value="'+ a[i]['realpath'] +'">'+ action[ a[i]['action'] ]+': '+ a[i]['path']+'</option>');
+					}
+				}
+			};
+			echo_list_pre_process(s);
+			echo_list_pre_process(f);
+			
+			$('#old_files_list>option').sort(function(a,b){
+                //按option中的值排序
+                var aText = $(a).val();
+                var bText = $(b).val();
+                if(aText > bText) return 1;
+                if(aText < bText) return -1;
+                return 0;
+            }).appendTo('#old_files_list');
+			
+			// 重新偵測click事件
+			$('.opentag').on('dblclick',function(){
+				let cmd = '"'+ $(this).val() +'"';
+				if($(this).hasClass('folder')){
+					cmd = 'explorer ' + cmd;
+				}
+				const { exec } = require('child_process');
+				exec(cmd);
+			});
+		}
+		
+		$('.link').on('dblclick',function(){
+			let cmd = 'start chrome https://github.com/jikker/mega_files_collation';
+			const { exec } = require('child_process');
+			exec(cmd);
+		});
+		
+		
+		function return_option_color(type, action){
+			if( type == 'folder'){
+				if(action == 'null') return 'alert-dark';
+				if(action == 'del') return 'alert-danger';
+				if(action == 'rename') return 'alert-info';
+			}else if(type == 'file'){
+				if(action == 'null') return 'alert-dark';
+				if(action == 'del') return 'alert-danger';
+				if(action == 'rename') return 'alert-info';
+			}else if(type == 'result'){
+				if(action[0] == 'null') return 'alert-dark';
+				if(action[0] != 'null'){
+					if( action[1] == 1) return 'alert-success';
+					else return 'alert-danger';
+				}
+			}
+			return '';
+		}
+		
+		// 列出 處理結果
+		function add_file_process_result(f){
+			let color = return_option_color('result', [ f['action'] , f['status']]);
+			let type = f['type'];
+			if( type == "folder") type = 'font-weight-bold';
+			else type = '';
+			if( f['action'] == 'move'){
+				$('#new_files_list').append('<option class="'+ type +' '+ color +'" value="'+ f['realpath'] +'">'+ f['result']+': '+f['path']+'</option>');
+			}else if ( f['action'] == 'rename' ){
+				if( f['status'] == 0)
+					$('#new_files_list').append('<option class="'+ type +' '+ color +'" value="'+ f['realpath'] +'">'+ f['result']+': '+f['path']+'</option>');
+				else
+					$('#new_files_list').append('<option class="'+ type +' '+ color +'" value="'+ f['realpath'] +'">'+ f['result']+': '+f['new_path']+' from '+ f['path'] +'</option>');
+			}else{
+				$('#new_files_list').append('<option class="'+ type +' '+ color +'" value="'+ f['realpath'] +'">'+ f['result']+': '+f['path']+'</option>');
+			}
+		}
+		
+		// 決定檔案處理方式
+		function pre_file_process(s, f){
+			if( $('#rm_file_label').prop('checked') ){	// 刪除垃圾檔案
+				for(let i=0;i<f.length;i++){
+					if( check_str_in_array(f[i]['name'], del_str) == 1){ // 檔名在移除名單
+						f[i]['action']='del';
+					}
+				}
+			}
+			if( $('#rm_name_label').prop('checked') ){			// 檔名移除字串
+				check_rename_str(f, rename_str);
+				check_rename_str(s, rename_str);
+			}
+			
+			if( $('#replace_name_label').prop('checked') ){			// 檔名字串取代
+				check_rereplace_str(f, replace_name_str);
+				check_rereplace_str(s, replace_name_str);
+			}
+			if( $('#move_by_serial').prop('checked') ){			// 檔案搬移至分類資料夾
+				
+			}
+			
+			if( $('#big_file_name').prop('checked') ){			// 檔名英文都大寫
+				
+			}
+			if( $('#remove_more_space').prop('checked') ){		// 檔名刪除多餘空白
+				check_rename_str(f, [' ']);
+				check_rename_str(s, [' ']);
+			}
+			if( $('#underline_to_space').prop('checked') ){		// 檔名底線換成空白
+				check_rereplace_str(f, [['_',' ']]);
+				check_rereplace_str(s, [['_',' ']]);
+			}
+			if( $('#remove_other_number').prop('checked') ){	// 刪除檔名-前面數字
+				
+			}
+			
+			if( $('#move_all_file_up').prop('checked') ){		// 資料夾內所有檔案往搬上一層
+				
+			}
+		}
+		
+		// 移除檔名字串
+		function check_rename_str(f, array){
+			let name = '';
+			let rule = '';
+			let tmp = 0;
+			for(let i=0;i<f.length;i++){
+				name = f[i]['name'];
+				for(let j=0;j<array.length;j++){
+					tmp = name.split(' ').length;
+					if( array[0] == ' '){ // 刪除多餘空白專用
+						if(tmp > 10) name = name.replace(new RegExp(array[0],'g'), '');
+					}else{
+						name = name.replace(new RegExp(array[j],'g'), '');
+					}
+				}
+				if(name != f[i]['name']){
+					f[i]['action'] = 'rename';
+					f[i]['new_name'] = name;
+					if(f[i]['level'] == 1){
+						f[i]['new_path'] = name;
+					}else{
+						f[i]['new_path'] = f[i]['path'].replace(new RegExp( f[i]['name'] ,'g'), name);
+					}
+					f[i]['new_realpath'] = f[i]['parent'] + '\\' + name;
+				}
+			}
+		}
+		
+		// 檔名字串取代
+		function check_rereplace_str(f, array){
+			let name = '';
+			let rule = '';
+			let tmp = 0;
+			for(let i=0;i<f.length;i++){
+				name = f[i]['name'];
+				for(let j=0;j<array.length;j++){
+					name = name.replace(new RegExp(array[j][0],'g'), array[j][1]);
+				}
+				if(name != f[i]['name']){
+					f[i]['action'] = 'rename';
+					f[i]['new_name'] = name;
+					f[i]['new_path'] = f[i]['path'].replace(new RegExp( f[i]['name'] ,'g'), name);
+					f[i]['new_realpath'] = f[i]['parent'] + '\\' + name;
+				}
+			}
+		}
+		
+		// sync 檔案更名
+		async function rename_files(f){
+			const fs = require('fs').promises;
+			let result = {};
+			let check_access = 1;
+			let do_rename = async function(){	
+				let r = await fs.rename(f['realpath'], f['new_realpath']);
+					console.log('rename: '+ f['name'] + ' to ' + f['new_name']);
+					result = {'result': '更名成功	', 'status': 1};
+			};
+			let access = await fs.access(f['new_realpath'])	
+				.then( rf => {		// 能訪問 檔案存在
+					console.log(f['new_name'] + ' is exist.');
+					result = {'result': '檔案存在	', 'status': 0};
+				})
+				.catch( rf => {		// 不能訪問 檔案不存在 改名
+					check_access = 0; // catch 不算 async 不能放 await 的function
+				});
+				if(check_access == 0){
+					await do_rename();
+				}
+			return result;
+		}
+		
+		// sync 移除檔案
+		async function remove_files(f){
+			const fs = require('fs').promises;
+			let r = await fs.unlink(f['realpath']);
+			console.log('del: '+ f['realpath']);
+			return {'result': '刪除成功	', 'status': 1};
+		}
+		
+		// 確認字串在array內
+		function check_str_in_array(str, array){
+			for(let i=0;i<array.length;i++){
+				if( str == array[i]){
+					return 1;
+				}
+				if( str.split('_____padding_file_').length > 1){ // 強制刪除BT版本過舊檔案
+					return 1;
+				}
+			}
+			return 0;
+		}
+		
+		function alphabet_to_int(a){
+			let alphabet = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+			for(let i=0; i< alphabet.length; i++){
+				if( a == alphabet[i]){
+					return i;
+				}
+			}
+			return -1;
+		}
+		
+	</script>
+  </body>
+</html>
