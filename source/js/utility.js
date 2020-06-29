@@ -1,6 +1,6 @@
 try{
-	let gui = require('nw.gui');
-    let win = gui.Window.get();
+	const gui = require('nw.gui');
+    const win = gui.Window.get();
 	let path = require('path');
 	var execPath = path.dirname( process.execPath ) + '/';
 	execPath.replace(/\\/g,"/");
@@ -12,16 +12,33 @@ catch(ReferenceError)
 }
 
 // 初始化設定
-function init_setting(){
+async function init_setting(){
 	//$('#name').text(init['name']);
 	//mypath = init['path']+init['name']+'.json';
 	load_init()
 	load_banner();
 	
 	try{
-		let gui = require('nw.gui');
-		let win = gui.Window.get();
-		win.maximize();
+		const gui = require('nw.gui');
+		const win = gui.Window.get();
+		let height = 0;
+		let width = 0;
+		let w = 1580;
+		let h = 960;
+		let wx = 0;
+		let hx = 0;
+		
+		await win.maximize();
+		height = win.height;
+		//height = window.outerHeight;
+		width = win.width;
+		if(height >= h && width >= w){
+			wx = (width-w)/2;
+			hx = (height-h)/2;
+			await win.unmaximize();
+			await win.resizeTo(w, h);
+			await win.moveTo( parseInt(wx), parseInt(hx)-20);
+		}
 	}
 	catch(ReferenceError)
 	{
